@@ -21,6 +21,8 @@ const jobSchema = new mongoose.Schema(
     experienceLevel: { type: String, enum: ['fresher', 'intern', 'junior', 'mid', 'any'], default: 'fresher' },
     source: { type: String, enum: ['pasted', 'manual'], default: 'pasted' },
     skillsExtractedByAI: { type: Boolean, default: false },
+    /** Set once extraction has run, even if the JD yielded zero skills, so retries don't loop. */
+    skillsExtractedAt: { type: Date },
     /** Hash of the JD text — lets AI skill extraction reuse cached results for identical JDs. */
     descriptionHash: { type: String, index: true },
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },

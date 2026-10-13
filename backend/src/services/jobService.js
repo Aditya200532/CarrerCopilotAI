@@ -51,7 +51,10 @@ export const jobService = {
     });
 
     if (!job.requiredSkills.length) {
-      await getQueue(QUEUES.jobExtraction).add('extract', { jobId: String(job._id) }, { jobId: `extract-${descriptionHash.slice(0, 16)}` });
+      // jobId keyed on the new document, not the JD hash: extraction results are cached by
+      // hash in aiService, so repeats cost nothing — and a hash-based id would be silently
+      // dropped by BullMQ dedup if an earlier extraction for that text produced zero skills.
+      await getQueue(QUEUES.jobExtraction).add('extract', { jobId: String(job._id) }, { jobId: `extract-${job._id}` });
     }
     return job;
   },

@@ -25,7 +25,9 @@ export default function JobDetails() {
   if (error) return <ErrorBanner message={error} onRetry={refetch} />;
   if (!job) return null;
 
-  const extracting = !job.requiredSkills?.length;
+  // Only "extracting" while the worker hasn't run yet — a finished extraction that found
+  // nothing shouldn't keep the button disabled forever.
+  const extracting = !job.requiredSkills?.length && !job.skillsExtractedAt;
 
   return (
     <div className="space-y-6">
@@ -66,7 +68,11 @@ export default function JobDetails() {
             <div className="mb-2 text-sm font-semibold text-slate-700">Required skills</div>
             <div className="flex flex-wrap gap-1.5">
               {(job.requiredSkills || []).map((s) => <Badge key={s} tone="brand">{s}</Badge>)}
-              {!job.requiredSkills?.length && <span className="text-sm text-slate-400">—</span>}
+              {!job.requiredSkills?.length && (
+                <span className="text-sm text-slate-400">
+                  {job.skillsExtractedAt ? 'None found in this description — paste a fuller JD.' : '—'}
+                </span>
+              )}
             </div>
           </div>
           <div>

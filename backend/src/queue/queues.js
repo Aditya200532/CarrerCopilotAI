@@ -1,5 +1,5 @@
 import { Queue } from 'bullmq';
-import { redis } from '../config/redis.js';
+import { redisConnectionOptions } from '../config/redis.js';
 
 /**
  * BullMQ queues — the "which task should be processed asynchronously?" side
@@ -32,7 +32,7 @@ export const QUEUES = {
 
 function makeQueue(name, overrides = {}) {
   return new Queue(name, {
-    connection: redis,
+    connection: redisConnectionOptions,
     defaultJobOptions: { ...defaultJobOptions, ...overrides },
   });
 }

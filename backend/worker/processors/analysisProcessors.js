@@ -24,6 +24,17 @@ export async function processSkillGap(job) {
   await analysis.save();
 
   try {
+    // The async job-extraction may not have run yet (or its queue job was lost); extract inline so the gap isn't 0 of 0.
+    if (!target.requiredSkills?.length) {
+      const extracted = await aiService.extractJobSkills(target.description);
+      target.requiredSkills = extracted.requiredSkills;
+      target.niceToHaveSkills = extracted.niceToHaveSkills;
+      if (extracted.role && !target.role) target.role = extracted.role;
+      target.skillsExtractedByAI = extracted.source === 'llm';
+      target.skillsExtractedAt = new Date();
+      await target.save();
+    }
+
     const profile = await StudentProfile.findOne({ user: userId });
 
     // Student skill set = profile skills ∪ skills extracted from latest resume analysis.

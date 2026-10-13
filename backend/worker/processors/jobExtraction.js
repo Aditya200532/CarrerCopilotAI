@@ -20,6 +20,7 @@ export async function processJobExtraction(job) {
   if (extracted.role && !target.role) target.role = extracted.role;
   if (extracted.experienceLevel) target.experienceLevel = extracted.experienceLevel;
   target.skillsExtractedByAI = extracted.source === 'llm';
+  target.skillsExtractedAt = new Date();
   await target.save();
 
   return { jobId, source: extracted.source, cached: extracted.cached };

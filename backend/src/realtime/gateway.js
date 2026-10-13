@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env.js';
+import { env, allowedOrigins } from '../config/env.js';
 
 /**
  * Realtime gateway (socket.io).
@@ -25,7 +25,7 @@ export { io };
 
 export function initGateway(httpServer) {
   io = new Server(httpServer, {
-    cors: { origin: env.clientUrl, credentials: true },
+    cors: { origin: allowedOrigins, credentials: true },
     path: '/socket.io',
   });
 

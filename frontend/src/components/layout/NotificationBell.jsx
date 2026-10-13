@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Bell } from 'lucide-react';
-import { endpoints } from '../../api/client.js';
+import { endpoints, socketOrigin } from '../../api/client.js';
 
 /**
  * Topbar bell: shows unread count (REST) and receives live pushes over the
@@ -19,7 +19,7 @@ export default function NotificationBell() {
     endpoints.notifications.list({ limit: 1 }).then((res) => setUnread(res.unreadCount || 0)).catch(() => {});
 
     const token = localStorage.getItem('cp_token');
-    const socket = io('/', { auth: { token }, transports: ['websocket', 'polling'] });
+    const socket = io(socketOrigin || '/', { auth: { token }, transports: ['websocket', 'polling'] });
     socketRef.current = socket;
     socket.on('notification:new', (n) => {
       setUnread((c) => c + 1);

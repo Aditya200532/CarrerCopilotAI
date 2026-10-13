@@ -27,8 +27,9 @@ export const analysisService = {
 
   /** Latest completed analysis of a type — powers "show my last skill gap". */
   async latest(userId, type) {
-    return AIAnalysis.findOne({ user: userId, type, status: 'completed' })
+    const found = await AIAnalysis.findOne({ user: userId, type, status: 'completed' })
       .sort({ completedAt: -1 }).lean();
+    return found;
   },
 
   /** Enqueue a skill-gap analysis for a target job. Returns the polling handle. */

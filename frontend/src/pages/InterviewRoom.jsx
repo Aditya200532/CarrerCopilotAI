@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { Send, SkipForward, Loader2, Radio, CheckCircle2, XCircle, Flag } from 'lucide-react';
-import { endpoints } from '../api/client.js';
+import { endpoints, socketOrigin } from '../api/client.js';
 import { Badge } from '../components/ui.jsx';
 import { useFetch } from '../hooks/useApi.js';
 
@@ -33,7 +33,7 @@ export default function InterviewRoom() {
 
   useEffect(() => {
     const token = localStorage.getItem('cp_token');
-    const socket = io('/interview', { auth: { token }, transports: ['websocket', 'polling'] });
+    const socket = io(`${socketOrigin}/interview`, { auth: { token }, transports: ['websocket', 'polling'] });
     socketRef.current = socket;
 
     socket.on('connect', () => setConnected(true));

@@ -34,3 +34,9 @@ export const env = {
 };
 
 export const LLM_AVAILABLE = Boolean(env.llm.apiKey);
+
+/** CLIENT_URL may be a single origin or a comma-separated list (frontend + preview URLs). */
+export const allowedOrigins = env.clientUrl
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);

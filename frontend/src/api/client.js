@@ -3,8 +3,15 @@ import axios from 'axios';
 /**
  * Single axios instance: attaches the JWT from localStorage and unwraps the
  * {success, data, meta} envelope so pages work with plain data.
+ *
+ * VITE_API_URL switches the app from dev (Vite proxy, '/api') to a deployed
+ * backend (absolute URL). Socket clients need the bare server origin, since
+ * WebSockets can't ride the Vite proxy in production.
  */
-export const api = axios.create({ baseURL: '/api' });
+export const apiUrl = import.meta.env.VITE_API_URL || '/api';
+export const socketOrigin = apiUrl.replace(/\/api\/?$/, '');
+
+export const api = axios.create({ baseURL: apiUrl });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('cp_token');

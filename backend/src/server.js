@@ -2,7 +2,7 @@ import http from 'node:http';
 import { Worker } from 'bullmq';
 import { createApp } from './app.js';
 import { connectDatabase } from './config/db.js';
-import { redis } from './config/redis.js';
+import { redis, redisConnectionOptions, waitForRedis } from './config/redis.js';
 import { env } from './config/env.js';
 import { initGateway } from './realtime/gateway.js';
 import { registerInterviewNamespace } from './realtime/interviewSocket.js';
@@ -13,6 +13,7 @@ import { resumeService } from './services/resumeService.js';
 
 async function main() {
   await connectDatabase();
+  await waitForRedis();
   await resumeService.ensureUploadDir();
 
   // API-process listeners: events emitted here (e.g. interview scheduled)
@@ -32,7 +33,7 @@ async function main() {
    * The AI worker keeps the expensive LLM queues.
    */
   const notificationWorker = new Worker(QUEUES.notifications, processNotification, {
-    connection: redis,
+    connection: redisConnectionOptions,
     concurrency: 10,
   });
   notificationWorker.on('failed', (job, err) =>
