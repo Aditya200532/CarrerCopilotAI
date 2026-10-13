@@ -4,6 +4,9 @@
   "description": "CareerPilot AI backend — Express API, AI worker, WebSocket interview server",
   "type": "module",
   "main": "src/server.js",
+  "engines": {
+    "node": ">=20.11.0"
+  },
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
