@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Video, Loader2, PlayCircle, FileText } from 'lucide-react';
 import { endpoints } from '../api/client.js';
 import { useFetch } from '../hooks/useApi.js';
@@ -16,6 +16,7 @@ export default function MockInterview() {
   const [settings, setSettings] = useState({ maxQuestionsPerRound: 3, difficulty: 'mixed', allowFollowUps: true });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const toggleRound = (r) =>
     setSelected((s) => (s.includes(r) ? s.filter((x) => x !== r) : [...s, r]));
@@ -24,7 +25,9 @@ export default function MockInterview() {
     setBusy(true); setError(null);
     try {
       const res = await endpoints.interviews.create({ targetRole, rounds: selected, settings });
-      window.location.href = `/mock-interview/${res.data.interviewId}`;
+      // Client-side nav (not window.location): a full page load to this deep
+      // path breaks on static hosts without an SPA fallback.
+      navigate(`/mock-interview/${res.data.interviewId}`);
     } catch (err) {
       setError(err.message);
       setBusy(false);
